@@ -1,4 +1,11 @@
+import type { NightCounts } from '../digest/counts.js';
 import type { Status } from '../status.js';
+
+function countsLabel(c: NightCounts | null | undefined): string {
+  if (!c) return '—';
+  const base = `log lines: ok ${c.ok} · retry ${c.retry} · fail ${c.fail}`;
+  return c.badLines > 0 ? `${base} · bad ${c.badLines}` : base;
+}
 
 export function StatusBoard({ status }: { status: Status }) {
   return (
@@ -20,7 +27,10 @@ export function StatusBoard({ status }: { status: Status }) {
       ) : (
         <ul>
           {status.nights.map((n) => (
-            <li>{n}</li>
+            <li>
+              <a href={`/digest/${n}`}>{n}</a>{' '}
+              <span class="mute">{countsLabel(status.counts[n])}</span>
+            </li>
           ))}
         </ul>
       )}
